@@ -1,0 +1,55 @@
+---
+# Post-installation tasks for MongoDB
+
+- name: Get user ID from /etc/passwd
+  ansible.builtin.shell: grep mongo /etc/passwd | cut -d ':' -f 3
+  register: user_id
+  changed_when: false
+
+- name: Get group ID from /etc/passwd
+  ansible.builtin.shell: grep mongo /etc/passwd | cut -d ':' -f 4
+  register: group_id
+  changed_when: false
+
+- name: Modify permissions for db directory
+  ansible.builtin.file:
+    path: "{{ mongodb_storage_dbpath }}"
+    owner: "{{ user_id.stdout }}"
+    group: "{{ group_id.stdout }}"
+
+# May need to set this when doing replication (WIP)
+# - name: Set bindIP for MongoDB
+#   ansible.builtin.replace:
+#     path: /etc/mongod.conf
+#     regexp: '127.0.0.1'
+#     replace: "{{ mgmt_ip }}"
+#   when: mongodb_highspeednetwork == 'enabled'
+#   tags: bindip
+
+- name: Remove existing WiredTiger storage engine configuration
+        # removing the following two lines to make the blockinfile task following this work
+        # without duplicating entries in the configuration file
+        #     engineConfig:
+        #    directoryForIndexes: false
+  ansible.builtin.lineinfile:
+    path: /etc/mongod.conf
+    regexp: "{{ item.regexp }}"
+    state: absent
+  with_items:
+    - { regexp: 'engineConfig:'}
+    - { regexp: 'directoryForIndexes: false'}
+  tags: compression
+
+- name: Set compression options for WiredTiger storage engine
+  ansible.builtin.blockinfile:
+    path: /etc/mongod.conf
+    block: |2  #indent depth
+          engineConfig:
+            directoryForIndexes: false
+            journalCompressor: {{ journalCompressor }}
+          collectionConfig:
+            blockCompressor: {{ blockCompressor }}
+          indexConfig:
+            prefixCompression: {{ prefixCompression }}
+    insertafter: "wiredTiger:"
+  tags: compression

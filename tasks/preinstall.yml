@@ -1,0 +1,45 @@
+---
+# Set the table for MongoDB installation on physical Ubuntu nodes
+
+- name: Prerequisite packages
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+      - python3-pip
+      - xfsprogs
+      - vim
+      - default-jre
+      - python2.7-minimal
+      - python3
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  register: apt_result
+  until: apt_result is success
+
+# Find the last Nebulon SCSI device
+- name: Find SCSI device for Nebulon volume
+  ansible.builtin.shell: lsblk -S | grep sd | tail -1 | cut -d " " -f 1
+  register: dev_x
+  changed_when: false
+
+- name: Set variable for Nebulon SCSI device
+  ansible.builtin.set_fact:
+    dev_x: "{{ dev_x.stdout }}"
+
+- name: Make XFS filesystem on Nebulon volume
+  community.general.filesystem:
+    fstype: xfs
+    dev: "/dev/{{ dev_x }}"
+
+- name: Mount XFS filesystem for MongoDB database
+  ansible.posix.mount:
+    name: "{{ mongodb_storage_dbpath }}"
+    src: "/dev/{{ dev_x }}"
+    opts: noatime,nofail
+    fstype: xfs
+    state: mounted

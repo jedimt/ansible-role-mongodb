@@ -1,0 +1,52 @@
+---
+# Install and configure YCSB for MongoDB
+
+- name: Create ycsb directory
+  ansible.builtin.file:
+    path: /root/ycsb
+    state: directory
+    mode: '0755'
+  tags:
+    - ycsb
+
+# To Do: Need to check actual contents of file, not just that it's there
+# to make sure we make changes if {{ dbsize }} gets updated between runs.
+- name: Check for existing YCSB config
+  ansible.builtin.stat:
+    path: /root/ycsb/workloads/
+  register: ycsb_config
+
+- name: Download and expand YCSB archive file to /root/ycsb
+  ansible.builtin.unarchive:
+    src: ycsb-mongodb-binding-0.17.0.tar.gz
+    dest: /root/ycsb
+    extra_opts:
+      - --strip-components=1
+  when: not ycsb_config.stat.exists
+  tags: [task_unarchive]
+
+- name: Modify YCSB workloads/workloada file
+  ansible.builtin.replace:
+    path: /root/ycsb/workloads/workloada
+    regexp: '1000'
+    replace: "{{ dbsize }}"
+  tags: [task_unarchive]
+
+- name: Copy YCSB load_db.sh file to host
+  ansible.builtin.template:
+    src: ycsb_load_db.j2
+    dest: /root/ycsb/ycsb_load_db.sh
+    mode: '0755'
+
+- name: Copy YCSB ycsb_run_workload.sh file to host
+  ansible.builtin.template:
+    src: ycsb_run_workload.j2
+    dest: /root/ycsb/ycsb_run_workload.sh
+    mode: '0755'
+
+- name: Configure update-alternatives for Python 2.7 (YCSB)
+  community.general.alternatives:
+    name: python
+    path: /usr/bin/python2.7
+    link: /usr/local/bin/python
+    state: auto
