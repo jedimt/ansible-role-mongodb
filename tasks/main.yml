@@ -95,7 +95,7 @@
   tags: [mongodb]
 
 - name: Create normal users without replicaset
-  communit.mongodb.mongodb_user:
+  community.mongodb.mongodb_user:
     database: "{{ item.database }}"
     name: "{{ item.name }}"
     password: "{{ item.password }}"
@@ -114,7 +114,7 @@
   tags: [mongodb]
 
 - name: Create oplog user with replicaset
-  communit.mongodb.mongodb_user:
+  community.mongodb.mongodb_user:
     database: admin
     user: "{{ item.user }}"
     password: "{{ item.password }}"

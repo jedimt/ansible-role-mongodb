@@ -68,7 +68,7 @@
     - ansible_service_mgr == "systemd"
     - mongodb_manage_systemd_unit | bool
   notify:
-    - reload systemd
+    - Reload systemd
 
 - name: Add symlink for systemd
   ansible.builtin.file:
@@ -79,7 +79,7 @@
     - ansible_service_mgr == "systemd"
     - mongodb_manage_systemd_unit | bool
   notify:
-    - reload systemd
+    - Reload systemd
 
   # Workaround for the idempotence issue on Debian 10 with pip module
 - name: Forcefully set mongodb_pymongo_from_pip to false on Debian 10
