@@ -17,14 +17,13 @@
     owner: "{{ user_id.stdout }}"
     group: "{{ group_id.stdout }}"
 
-# May need to set this when doing replication (WIP)
-# - name: Set bindIP for MongoDB
-#   ansible.builtin.replace:
-#     path: /etc/mongod.conf
-#     regexp: '127.0.0.1'
-#     replace: "{{ mgmt_ip }}"
-#   when: mongodb_highspeednetwork == 'enabled'
-#   tags: bindip
+- name: Set bindIP for MongoDB
+  ansible.builtin.replace:
+    path: /etc/mongod.conf
+    regexp: '127.0.0.1'
+    replace: "{{ mgmt_ip }}"
+  when: not bindIP_localhost
+  tags: bindip
 
 - name: Remove existing WiredTiger storage engine configuration
         # removing the following two lines to make the blockinfile task following this work

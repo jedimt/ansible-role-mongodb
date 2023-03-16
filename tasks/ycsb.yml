@@ -49,4 +49,11 @@
     name: python
     path: /usr/bin/python2.7
     link: /usr/local/bin/python
+    state: present
+
+- name: Configure update-alternatives for Python 3
+  community.general.alternatives:
+    name: python
+    path: /usr/bin/python3
+    link: /usr/local/bin/python
     state: auto
