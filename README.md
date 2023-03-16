@@ -258,5 +258,7 @@ And inventory file for replica set:
 mongo_master
 mongo_replicas
 ```
+If you wish to use YCSB with MongoDB you will need to use `update-alternatives --config python`
+to select the Python2.7 install, which is required for YCSB to work.
 
 Licensed under the GPLv2 License. See the [LICENSE.md](LICENSE.md) file for details.
