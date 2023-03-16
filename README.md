@@ -160,6 +160,32 @@ mongodb_root_admin_password: passw0rd
 
 mongodb_root_backup_name: backupuser
 mongodb_root_backup_password: passw0rd
+
+#MongoDB Compression options
+journalCompressor: "zstd" #{none, snappy, zlib, zstd}
+blockCompressor: "zstd"   #{none, snappy, zlib, zstd}
+prefixCompression: "true" #{true, false} - has to be in quotes otherwise gets capitalized which causes mongo to fail
+
+
+# YCSB
+# Configure YCSB for MongoDB (true|false)
+configure_ycsb: true
+
+# Number of threads to use when loading the database - for the example ycsb_load_db.sh file
+ycsb_load_threads: 12
+
+# Number of threads to use when running a workload - for the example ycsb_run_workload.sh file
+ycsb_run_threads: 12
+
+# dbsize is in # of records. Each record is ~1167 bytes.
+# This is fed to YCSB ycsb_load_db.sh script for creating the database
+# records = target db size in bytes / 1167
+# Examples:
+# ~1TB =    (1000000000000 Bytes / 1167 bytes per record) = 856898029 records
+# ~500GB =  (500000000000 Bytes / 1167 bytes per record)  = 428449014 records
+# ~100GB =  (100000000000 Bytes / 1167 bytes per record)  = 85689802 records
+# ~30GB =   (30000000000 Bytes / 1167 bytes per record)   = 25706940 records
+dbsize: 428449014
 ```
 
 #### Usage
@@ -200,7 +226,7 @@ mongodb_root_backup_password
 mongodb_security_keyfile
 ```
 
-Example vars for replication:
+Example vars for replication (WIP):
 
 ```yaml
 # It's a 'master' node
@@ -234,7 +260,3 @@ mongo_replicas
 ```
 
 Licensed under the GPLv2 License. See the [LICENSE.md](LICENSE.md) file for details.
-
-#### Feedback, bug-reports, requests, ...
-
-Are [welcome](https://github.com/UnderGreen/ansible-role-mongodb/issues)!
