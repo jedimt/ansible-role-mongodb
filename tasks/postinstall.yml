@@ -21,7 +21,7 @@
   ansible.builtin.replace:
     path: /etc/mongod.conf
     regexp: '127.0.0.1'
-    replace: "{{ mgmt_ip }}"
+    replace: "{{ mgt_ip }}"
   when: not bindIP_localhost
   tags: bindip
 
@@ -51,4 +51,5 @@
           indexConfig:
             prefixCompression: {{ prefixCompression }}
     insertafter: "wiredTiger:"
+  notify: Mongodb restart
   tags: compression

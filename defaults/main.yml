@@ -35,7 +35,7 @@ mongodb_gid:
 mongodb_daemon_name: "{{ 'mongod' if ('mongodb-org' in mongodb_package) else 'mongodb' }}"
 
 ## net Options
-bindIP_localhost: false                          # If false, replace 127.0.0.1 w/ {{ mgmt_ip }}
+bindIP_localhost: true                           # If false, replace 127.0.0.1 w/ {{ mgt_ip }}
 mongodb_net_bindip: 127.0.0.1                    # Comma separated list of ip addresses to listen on
 mongodb_net_http_enabled: false                  # Enable http interface
 mongodb_net_ipv6: false                          # Enable IPv6 support (disabled by default)
