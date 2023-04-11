@@ -192,7 +192,7 @@ dbsize: 428449014
 
 #### Usage
 
-Add `undergreen.mongodb` to your roles and set vars in your playbook file.
+Add `jedimt.mongodb` to your roles and set vars in your playbook file.
 
 Example vars for authorization:
 
@@ -264,3 +264,16 @@ If you wish to use YCSB with MongoDB you will need to use `update-alternatives -
 to select the Python2.7 install, which is required for YCSB to work.
 
 Licensed under the GPLv2 License. See the [LICENSE.md](LICENSE.md) file for details.
+
+Example Playbook
+----------------
+
+    # ===========================================================================
+    # Install and configure MongoDB
+    # ===========================================================================
+    - name: Install and configure MongoDB
+      hosts: mongo
+      tags: play_mongodb_install
+
+      roles:
+        - jedimt.mongodb

@@ -3,7 +3,7 @@ dependencies: []
 
 galaxy_info:
   author: jedimt
-  role_name: mongodb_install
+  role_name: mongodb
   description: Manage MongoDB with authentication and replica sets
   license: GPLv2
   min_ansible_version: "5"
