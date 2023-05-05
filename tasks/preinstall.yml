@@ -21,6 +21,13 @@
   register: apt_result
   until: apt_result is success
 
+# Rescan the SCSI bus to make sure we have all currently provisioned volumes
+- name: Run rescan-scsi-bus.sh to ensure volumes are mounted
+  ansible.builtin.command:
+    rescan-scsi-bus.sh
+  register: rescan_results
+  changed_when: "'0 new' not in rescan_results.stdout"
+
 # Find the last Nebulon SCSI device
 - name: Find SCSI device for Nebulon volume
   ansible.builtin.shell: lsblk -S | grep sd | tail -1 | cut -d " " -f 1
